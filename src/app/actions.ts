@@ -1,32 +1,28 @@
 'use server';
 
-import { predictGender as predictGenderFlow } from '@/ai/flows/predict-gender-flow';
+import { roastUser } from '@/ai/flows/roast-bot-flow';
 
-type PredictionState = {
-  gender?: 'Male' | 'Female' | 'Uncertain';
+type RoastState = {
+  roast?: string;
   error?: string;
 };
 
-export async function predictGender(
-  prevState: PredictionState,
+export async function getRoast(
+  prevState: RoastState,
   formData: FormData
-): Promise<PredictionState> {
-  const imageFile = formData.get('image') as File;
+): Promise<RoastState> {
+  const topic = formData.get('topic') as string;
 
-  if (!imageFile || imageFile.size === 0) {
-    return { error: 'Please select an image file.' };
+  if (!topic) {
+    return { error: 'You need to give me something to roast, you waste of space.' };
   }
 
   try {
-    const buffer = await imageFile.arrayBuffer();
-    const photoDataUri = `data:${imageFile.type};base64,${Buffer.from(buffer).toString('base64')}`;
-
-    const { gender } = await predictGenderFlow({ photoDataUri });
-
-    return { gender };
+    const { roast } = await roastUser({ topic });
+    return { roast };
   } catch (e) {
     console.error(e);
     const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
-    return { error: `Failed to process image: ${errorMessage}` };
+    return { error: `Even the server is tired of you. Error: ${errorMessage}` };
   }
 }

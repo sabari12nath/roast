@@ -1,5 +1,4 @@
 import { config } from 'dotenv';
 config();
 
-import '@/ai/flows/generate-alt-text.ts';
-import '@/ai/flows/predict-gender-flow.ts';
+import '@/ai/flows/roast-bot-flow.ts';
