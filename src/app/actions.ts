@@ -1,6 +1,6 @@
 'use server';
 
-import { generateAltText } from '@/ai/flows/generate-alt-text';
+import { predictGender as predictGenderFlow } from '@/ai/flows/predict-gender-flow';
 
 type PredictionState = {
   gender?: 'Male' | 'Female' | 'Uncertain';
@@ -21,18 +21,9 @@ export async function predictGender(
     const buffer = await imageFile.arrayBuffer();
     const photoDataUri = `data:${imageFile.type};base64,${Buffer.from(buffer).toString('base64')}`;
 
-    const { altText } = await generateAltText({ photoDataUri });
+    const { gender } = await predictGenderFlow({ photoDataUri });
 
-    const lowerCaseAltText = altText.toLowerCase();
-
-    if (/\b(man|male|boy|gentleman)\b/.test(lowerCaseAltText)) {
-      return { gender: 'Male' };
-    }
-    if (/\b(woman|female|girl|lady)\b/.test(lowerCaseAltText)) {
-      return { gender: 'Female' };
-    }
-
-    return { gender: 'Uncertain' };
+    return { gender };
   } catch (e) {
     console.error(e);
     const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
