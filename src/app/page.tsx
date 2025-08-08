@@ -88,8 +88,7 @@ function LoadingCard() {
 }
 
 function FormContent() {
-  const [state, formAction] = useActionState(predictGender, initialState);
-  const { pending } = useFormStatus();
+  const [state, formAction, pending] = useActionState(predictGender, initialState);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -129,7 +128,7 @@ function FormContent() {
   }
 
   return (
-    <div className="space-y-6">
+    <form action={formAction} className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>Upload Image</CardTitle>
@@ -171,13 +170,11 @@ function FormContent() {
       <div className={cn("transition-opacity duration-500 ease-in-out", showResult || pending ? "opacity-100" : "opacity-0")}>
         {pending ? <LoadingCard /> : showResult && <ResultCard state={state} />}
       </div>
-    </div>
+    </form>
   );
 }
 
 export default function Home() {
-  // @ts-ignore TODO: fix in the next version of React
-  const [state, formAction] = useActionState(predictGender, initialState);
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
       <div className="w-full max-w-md space-y-6">
@@ -189,9 +186,7 @@ export default function Home() {
             Discover the perceived gender from an image.
           </p>
         </div>
-        <form action={formAction}>
-            <FormContent/>
-        </form>
+        <FormContent/>
       </div>
     </main>
   );
