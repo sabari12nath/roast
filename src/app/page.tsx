@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef, useTransition } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useState, useEffect, useRef, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
 import { Upload, Mars, Venus, Loader2, UserCircle2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -88,7 +88,7 @@ function LoadingCard() {
 }
 
 function FormContent() {
-  const [state, formAction] = useFormState(predictGender, initialState);
+  const [state, formAction] = useActionState(predictGender, initialState);
   const { pending } = useFormStatus();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -176,6 +176,8 @@ function FormContent() {
 }
 
 export default function Home() {
+  // @ts-ignore TODO: fix in the next version of React
+  const [state, formAction] = useActionState(predictGender, initialState);
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
       <div className="w-full max-w-md space-y-6">
@@ -187,7 +189,7 @@ export default function Home() {
             Discover the perceived gender from an image.
           </p>
         </div>
-        <form action={formAction => predictGender(initialState, formAction)}>
+        <form action={formAction}>
             <FormContent/>
         </form>
       </div>
